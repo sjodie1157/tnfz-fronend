@@ -1,6 +1,5 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
     <div v-if="!Users.length">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -8,7 +7,10 @@
     </div>
     <div v-else>
       <ul>
-        <li v-for=" user  in  Users " :key="user.userID">{{ user.firstName }} {{ user.lastName }}</li>
+        <li v-for="user in Users" :key="user.userID">
+          {{ user.firstName }} {{ user.lastName }}
+          <button @click="deleteUser(user.userID)">Delete</button>
+        </li>
       </ul>
     </div>
   </div>
@@ -17,12 +19,23 @@
 <script>
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     Users() {
       return this.$store.state.Users || [];
+    }
+  },
+  methods: {
+    async deleteUser(userID) {
+      try {
+        await fetch(`http://localhost:4500/Users/removeUser/${userID}`, {
+          method: 'DELETE'
+        });
+        this.$store.dispatch('fetchUsers');
+      } catch (error) {
+        console.error('Error deleting user', error);
+      }
     }
   },
   mounted() {
