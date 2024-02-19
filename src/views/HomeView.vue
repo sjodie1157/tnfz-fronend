@@ -36,8 +36,7 @@ export default {
         lastName: '',
         emailAdd: '',
         userPwd: '',
-        userAge: '',
-        userroll: ''
+        userAge: ''
       }
     };
   },
@@ -52,12 +51,11 @@ export default {
           body: JSON.stringify(this.user)
         });
         this.user = {
-          firstName: this.firstName,
-          lastName: this.lastName,
-          emailAdd: this.emailAdd,
-          userPwd: this.userPwd,
-          userAge: this.userAge,
-          userroll: 'user'
+          firstName: this.user.firstName,
+          lastName: this.user.lastName,
+          emailAdd: this.user.emailAdd,
+          userPwd: this.user.userPwd,
+          userAge: this.user.userAge
         };
         alert('User has been added')
       } catch (error) {
