@@ -33,6 +33,7 @@ export default {
           method: 'DELETE'
         });
         this.$store.dispatch('fetchUsers');
+        alert('User has been removed')
       } catch (error) {
         console.error('Error deleting user', error);
       }
