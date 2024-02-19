@@ -1,13 +1,25 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/products">products</router-link> |
-    <router-link to="/contact">contact</router-link> |
-    <router-link to="/checkout">checkout</router-link> 
-  </nav>
-  <router-view/>
+  <div>
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/products">products</router-link> |
+      <router-link to="/contact">contact</router-link> |
+      <router-link to="/checkout">checkout</router-link> |
+      <router-link to="/admin">Admin</router-link>
+    </nav>
+    <router-view />
+  </div>
 </template>
+
+<script>
+
+export default {
+  components: {
+  
+  },
+};
+</script>
 
 <style>
 #app {
