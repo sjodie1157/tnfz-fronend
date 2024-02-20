@@ -2,8 +2,8 @@
   <div id="app">
     <header>
       <h1>Sign in / up</h1>
-      <div v-if="isLoggedIn">
-        <p>Signed in as: {{ currentUser.firstName }}</p>
+      <div v-if="$cookies.isKey('webtoken')">
+        <p>Signed in as: {{ username() }}</p>
         <button @click="signOut">Sign Out</button>
         <nav>
           <router-link to="/">Home</router-link> |
@@ -11,7 +11,7 @@
           <router-link to="/products">Products</router-link> |
           <router-link to="/contact">Contact</router-link> |
           <router-link to="/checkout">Checkout</router-link>
-          <span v-if="currentUser.userRoll === 'Admin'"> | <router-link to="/admin">Admin</router-link></span>
+          <span v-if="userRoll() === 'Admin'"> | <router-link to="/admin">Admin</router-link></span>
         </nav>
         <router-view />
       </div>
@@ -24,23 +24,23 @@
           <form @submit.prevent="addUser">
             <div>
               <label for="firstName">First Name:</label>
-              <input type="text" id="firstName" v-model="user.firstName">
+              <input type="text" id="firstName" v-model="user.firstName" required>
             </div>
             <div>
               <label for="lastName">Last Name:</label>
-              <input type="text" id="lastName" v-model="user.lastName">
+              <input type="text" id="lastName" v-model="user.lastName" required>
             </div>
             <div>
               <label for="email">Email:</label>
-              <input type="email" id="email" v-model="user.emailAdd">
+              <input type="email" id="email" v-model="user.emailAdd" required>
             </div>
             <div>
               <label for="password">Password:</label>
-              <input type="password" id="password" v-model="user.userPwd">
+              <input type="password" id="password" v-model="user.userPwd" required>
             </div>
             <div>
               <label for="age">Age:</label>
-              <input type="number" id="age" v-model="user.userAge">
+              <input type="number" id="age" v-model="user.userAge" required>
             </div>
             <button type="submit">Sign Up</button>
           </form>
@@ -55,6 +55,7 @@ export default {
   name: 'App',
   data() {
     return {
+      /* eslint-disable */
       emailAdd: '',
       userPwd: '',
       user: {
@@ -69,6 +70,7 @@ export default {
   },
   computed: {
     isLoggedIn() {
+      $cookies.isKey('webtoken')
       return this.$store.state.isLoggedIn;
     },
     currentUser() {
@@ -86,6 +88,7 @@ export default {
     async signOut() {
       try {
         await this.$store.dispatch('signOut');
+
       } catch (error) {
         console.error('Error signing out:', error);
       }
@@ -110,6 +113,16 @@ export default {
         alert('User has been added')
       } catch (error) {
         console.error('Error adding user', error);
+      }
+    },
+    username() {
+      if (localStorage.getItem('username')) {
+        return JSON.parse(localStorage.getItem('username'))
+      }
+    },
+    userRoll() {
+      if (localStorage.getItem('userRoll')) {
+        return JSON.parse(localStorage.getItem('userRoll'))
       }
     }
   }
