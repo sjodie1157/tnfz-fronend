@@ -1,11 +1,11 @@
 import { createStore } from 'vuex';
 
 const serverUrl = 'http://localhost:4500/Users';
-
+/* eslint-disable */
 export default createStore({
   state: {
     users: [],
-    signedUser: null,
+    signedUser: '',
     isLoggedIn: false
   },
   mutations: {
@@ -48,12 +48,17 @@ export default createStore({
           headers: {
             'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify({ emailAdd, userPwd })
         });
+
         let { token, user } = await res.json();
-        localStorage.setItem('token', token);
+        document.cookie = `webtoken=${token};`;
         commit('setSignedUser', user);
         commit('setIsLoggedIn', true);
+        localStorage.setItem('username', JSON.stringify(user.firstName))
+        localStorage.setItem('userRoll', JSON.stringify(user.userRoll))
+        location.reload()
       } catch (error) {
         console.error('Error signing in:', error);
         throw error;
@@ -61,9 +66,12 @@ export default createStore({
     },
     async signOut({ commit }) {
       try {
-        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userRoll');
         commit('setSignedUser', null);
         commit('setIsLoggedIn', false);
+        location.href = 'http://localhost:8080'
+        $cookies.remove('webtoken')
       } catch (error) {
         console.error('Error signing out:', error);
         throw error;
