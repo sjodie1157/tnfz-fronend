@@ -11,7 +11,11 @@
           <router-link to="/products">Products</router-link> |
           <router-link to="/contact">Contact</router-link> |
           <router-link to="/checkout">Checkout</router-link>
-          <span v-if="userRoll() === 'Admin'"> | <router-link to="/admin">Admin</router-link></span>
+          <span v-if="isAdmin"> | <router-link to="/admin">Admin</router-link>
+          </span>
+          <span v-else>
+            <router-link to="/"></router-link>
+          </span>
         </nav>
         <router-view />
       </div>
@@ -51,11 +55,11 @@
 </template>
 
 <script>
+/* eslint-disable */
 export default {
   name: 'App',
   data() {
     return {
-      /* eslint-disable */
       emailAdd: '',
       userPwd: '',
       user: {
@@ -75,26 +79,38 @@ export default {
     },
     currentUser() {
       return this.$store.getters.currentUser;
+    },
+    isAdmin() {
+      return this.userRoll() === 'Admin';
     }
   },
   methods: {
     async signIn() {
       try {
+        if (this.emailAdd.trim() === '' || this.userPwd.trim() === '') {
+          alert('Email and password cannot be blank');
+          return;
+        }
+
         await this.$store.dispatch('signIn', { emailAdd: this.emailAdd, userPwd: this.userPwd });
       } catch (error) {
-        console.error('Error signing in:', error);
+        alert('Error signing in:', error);
       }
     },
     async signOut() {
       try {
         await this.$store.dispatch('signOut');
-
       } catch (error) {
-        console.error('Error signing out:', error);
+        alert('Error signing out:', error);
       }
     },
     async addUser() {
       try {
+        if (this.user.emailAdd.trim() === '' || this.user.userPwd.trim() === '') {
+          alert('Email and password cannot be blank');
+          return;
+        }
+
         await fetch(`http://localhost:4500/Users/addUser`, {
           method: 'POST',
           headers: {
@@ -102,6 +118,7 @@ export default {
           },
           body: JSON.stringify(this.user)
         });
+
         this.user = {
           firstName: this.firstName,
           lastName: this.lastName,
@@ -110,9 +127,10 @@ export default {
           userAge: this.userAge,
           userRoll: 'user'
         };
+
         alert('User has been added')
       } catch (error) {
-        console.error('Error adding user', error);
+        alert('Error adding user', error);
       }
     },
     username() {
@@ -129,4 +147,6 @@ export default {
 };
 </script>
 
-<style></style>
+
+<style>
+</style>
