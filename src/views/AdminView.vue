@@ -1,18 +1,20 @@
 <template>
-    <div class="admin">
-        <h2>Remove Users</h2>
-        <div v-if="!users.length">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+    <div v-if="isAdmin">
+        <div class="admin">
+            <h2>Remove Users</h2>
+            <div v-if="loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
-        </div>
-        <div v-else>
-            <ul>
-                <li v-for="user in users" :key="user.userID">
-                    {{ user.firstName }} {{ user.lastName }}
-                    <button @click="deleteUser(user.userID)">Delete</button>
-                </li>
-            </ul>
+            <div v-else>
+                <ul>
+                    <li v-for="user in users" :key="user.userID">
+                        {{ user.firstName }} {{ user.lastName }}
+                        <button @click="deleteUser(user.userID)">Delete</button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
@@ -21,12 +23,15 @@
 export default {
     data() {
         return {
-            loading: false,
+            loading: true,
         };
     },
     computed: {
         users() {
             return this.$store.state.users || [];
+        },
+        isAdmin() {
+            return this.userRoll() === 'Admin';
         },
     },
     methods: {
@@ -41,10 +46,14 @@ export default {
                 console.error('Error deleting user', error);
             }
         },
+        userRoll() {
+            if (localStorage.getItem('userRoll')) {
+                return JSON.parse(localStorage.getItem('userRoll'))
+            }
+        },
     },
     mounted() {
         try {
-            this.loading = true;
             setTimeout(() => {
                 this.$store.dispatch('fetchUsers');
                 this.loading = false;
